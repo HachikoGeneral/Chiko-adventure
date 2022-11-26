@@ -57,8 +57,8 @@ function copyToClipboard(text) {
     }
 }
 
-function updateCHKPrice() {
-    clearTimeout(chkPriceTimer);
+function updateBNBPrice() {
+    clearTimeout(bnbPriceTimer);
     if (currency === 'GTT') {
         chkPrice = 1 / (sellPrice + ((buyPrice - sellPrice) / 2));
         chkPriceTimer = setTimeout(updateCHKPrice, 10000);
@@ -307,7 +307,7 @@ window.addEventListener('load', function () {
 
     $('#currency').change(function () {
         currency = $(this).val();
-        updateCHKPrice();
+        updateBNBPrice();
     });
 
     updateBNBPrice();
@@ -345,7 +345,7 @@ function updateData() {
             const tokenAmount = (myBalance);
             
             $('.balance').text(Number(tokenAmount.toFixed(3)));
-            contract.calculateCHKReceived(r, function (e, r) {
+            contract.calculateBNBReceived(r, function (e, r) {
                 let bal = convertWeiToEth(r);
                 $('.value').text(bal.toFixed(4));
                 $('.value-usd').text(Number((convertWeiToEth(r * 1) * bnbPrice).toFixed(2)).toLocaleString());
