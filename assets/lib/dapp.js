@@ -1,5 +1,5 @@
 // CONSTANTS
-var contractAddress = '0x0c22C33eaEFC961Ed529a6Af4654B6c2f51c12D3'; // Mainnet
+var contractAddress = '0x35e3fF1ca0360cCf8F6291e8a26A1282a9A4a87f'; // Mainnet
 // var contractAddress = '0x1b173752a08293baCf1B13f2c3201715e45483aD'; // Testnet
 
 // GLOBALS
@@ -57,22 +57,22 @@ function copyToClipboard(text) {
     }
 }
 
-function updateBNBPrice() {
+function updateCHKPrice() {
     clearTimeout(bnbPriceTimer);
-    if (currency === 'B1VS') {
-        bnbPrice = 1 / (sellPrice + ((buyPrice - sellPrice) / 2));
-        bnbPriceTimer = setTimeout(updateBNBPrice, 10000);
+    if (currency === 'GTT') {
+        chkPrice = 1 / (sellPrice + ((buyPrice - sellPrice) / 2));
+        chkPriceTimer = setTimeout(updateCHKPrice, 10000);
     } else {
         $.getJSON('https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=' + currency, function (result) {
 
             for (var key in result.binancecoin) {
-                var bnb = result.binancecoin[key];
+                var chk = result.binancecoin[key];
             }
 
-            bnbPrice = parseFloat(bnb);
-            $('.bnbPrice').text(bnbPrice);
+            chkPrice = parseFloat(chk);
+            $('.chkPrice').text(chkPrice);
 
-            bnbPriceTimer = setTimeout(updateBNBPrice, 10000);
+            chkPriceTimer = setTimeout(updateCHKPrice, 10000);
         });
     }
 }
@@ -248,7 +248,7 @@ window.addEventListener('load', function () {
         }
         
         if (!parseFloat(amount)) {
-            alertify.error("Invalid B1VS Amount to Transfer!");
+            alertify.error("Invalid GTT Amount to Transfer!");
             return
         }
         let amountConverted = web3js.toBigNumber(amount * 1000000000000000000);
@@ -307,7 +307,7 @@ window.addEventListener('load', function () {
 
     $('#currency').change(function () {
         currency = $(this).val();
-        updateBNBPrice();
+        updateCHKPrice();
     });
 
     updateBNBPrice();
@@ -315,7 +315,7 @@ window.addEventListener('load', function () {
     $('#purchase-amount').bind("keypress keyup click", function (e) {
         var number = $('#purchase-amount').val();
         var numTokens = number / globalBuyPrice;
-        $('.number-of-tokens').text("With " + (number == 0 ? 0 : number) + " BNB you can buy " + numTokens.toFixed(3) + " B1VS");
+        $('.number-of-tokens').text("With " + (number == 0 ? 0 : number) + " CHK you can buy " + numTokens.toFixed(3) + " GTT");
     });
 
     $('#copy-ref-link').click(function (e) {
@@ -345,10 +345,10 @@ function updateData() {
             const tokenAmount = (myBalance);
             
             $('.balance').text(Number(tokenAmount.toFixed(3)));
-            contract.calculateBNBReceived(r, function (e, r) {
+            contract.calculateCHKReceived(r, function (e, r) {
                 let bal = convertWeiToEth(r);
                 $('.value').text(bal.toFixed(4));
-                $('.value-usd').text(Number((convertWeiToEth(r * 1) * bnbPrice).toFixed(2)).toLocaleString());
+                $('.value-usd').text(Number((convertWeiToEth(r * 1) * chkPrice).toFixed(2)).toLocaleString());
             });
         });
 
@@ -368,7 +368,7 @@ function updateData() {
             let div = convertWeiToEth(r).toFixed(6)
 
             $('.div').text(div);
-            $('input.div').val(div + " BNB");
+            $('input.div').val(div + " CHK");
             $('.div-usd').text(Number((convertWeiToEth(r) * bnbPrice).toFixed(2)).toLocaleString());
 
             if (dividendValue != div) {
@@ -386,7 +386,7 @@ function updateData() {
             $('#totalRefEarnings').text((r / 1e18).toFixed(3))
         });
         web3js.eth.getBalance(currentAddress, function (e, r) {
-            $('.address-balance').text(convertWeiToEth(r).toFixed(6) + ' BNB')
+            $('.address-balance').text(convertWeiToEth(r).toFixed(6) + ' CHK')
         });
     } else {
 
@@ -414,12 +414,12 @@ function updateData() {
     contract.sellPrice(function (e, r) {
         let sellPrice = convertWeiToEth(r);
         $('.sell').text(sellPrice.toFixed(6) + ' ');
-        $('.sell-usd').text('$' + Number((sellPrice * bnbPrice).toFixed(2)).toLocaleString() + ' ' + currency + '');
+        $('.sell-usd').text('$' + Number((sellPrice * chkPrice).toFixed(2)).toLocaleString() + ' ' + currency + '');
     });
 
     web3js.eth.getBalance(contract.address, function (e, r) {
         $('.contract-balance').text(convertWeiToEth(r).toFixed(4) + " ");
-        $('.contract-balance-usd').text('$' + Number((convertWeiToEth(r) * bnbPrice).toFixed(2)).toLocaleString() + ' ' + currency + '');
+        $('.contract-balance-usd').text('$' + Number((convertWeiToEth(r) * chkPrice).toFixed(2)).toLocaleString() + ' ' + currency + '');
     });
     
     // WHAT-YOU-GET PREDICTOR
@@ -435,7 +435,7 @@ function updateData() {
 		if ( value > 0) {
             contract.calculateTokensReceived(value, function (e, r) {
                 var numTokens = r / 100000;
-                $('#deposit-hint').text("You will get approx. " + numberWithCommas(numTokens.toFixed(2)) + " B1VS");
+                $('#deposit-hint').text("You will get approx. " + numberWithCommas(numTokens.toFixed(2)) + " GTT");
             });	
         }
     })
@@ -450,7 +450,7 @@ function updateData() {
 
 		if ( value > 0) {
             contract.calculateBNBReceived(value, function (e, r) {
-                $('#withdraw-hint').text("You will get approx. " + numberWithCommas(r.div(1e18).toFixed(2)) + " BNB");
+                $('#withdraw-hint').text("You will get approx. " + numberWithCommas(r.div(1e18).toFixed(2)) + " CHK");
             });
         }
 		
@@ -482,33 +482,33 @@ function attachEvents() {
             switch (result.event) {
                 case 'onTokenPurchase':
                     if (currentUserEvent) {
-                        alertify.success('You Purchased ' + result.args.tokensMinted.div(1000000000000000000).toFixed(4) + ' B1VS for ' + result.args.incomingBNB.div(1000000000000000000).toFixed(4) + ' BNB');
+                        alertify.success('You Purchased ' + result.args.tokensMinted.div(1000000000000000000).toFixed(4) + ' GTT for ' + result.args.incomingCHK.div(1000000000000000000).toFixed(4) + ' CHK');
                     } else {
-                        alertify.message(result.args.tokensMinted.div(1000000000000000000).toFixed(4) + ' B1VS was just bought by someone, for ' + result.args.incomingBNB.div(1000000000000000000).toFixed(4) + ' BNB.');
+                        alertify.message(result.args.tokensMinted.div(1000000000000000000).toFixed(4) + ' GTT was just bought by someone, for ' + result.args.incomingCHK.div(1000000000000000000).toFixed(4) + ' CHK.');
                     }
                     break;
                 case 'onTokenSell':
                     if (currentUserEvent) {
-                        alertify.success('You Sold ' + result.args.tokensBurned.div(1000000000000000000).toFixed(4) + ' B1VS for ' + result.args['bnbEarned'].div(1000000000000000000).toFixed(4) + ' BNB.');
+                        alertify.success('You Sold ' + result.args.tokensBurned.div(1000000000000000000).toFixed(4) + ' GTT for ' + result.args['chkEarned'].div(1000000000000000000).toFixed(4) + ' CHK.');
                     } else {
-                        alertify.warning('Someone else sold tokens. They received ' + result.args['bnbEarned'].div(1000000000000000000).toFixed(4) + ' BNB for ' + result.args.tokensBurned.div(1000000000000000000).toFixed(4) + ' B1VS.');
+                        alertify.warning('Someone else sold tokens. They received ' + result.args['bnbEarned'].div(1000000000000000000).toFixed(4) + ' CHK for ' + result.args.tokensBurned.div(1000000000000000000).toFixed(4) + ' GTT.');
                     }
                     break;
                 case 'onWithdraw':
                     if (currentUserEvent) {
-                        alertify.warning('Withdrawal of ' + result.args['bnbWithdrawn'].div(1000000000000000000).toFixed(4) + ' Successful!');
+                        alertify.warning('Withdrawal of ' + result.args['chkWithdrawn'].div(1000000000000000000).toFixed(4) + ' Successful!');
                     }
                     break;
                 case 'onReinvestment':
                     if (currentUserEvent) {
-                        alertify.success('Your reinvestment of ' + result.args.bnbReinvested.div(1000000000000000000).toFixed(4) + 'BNB has yielded ' + result.args.tokensMinted.div(1000000000000000000).toFixed(4) + ' B1VS tokens!');
+                        alertify.success('Your reinvestment of ' + result.args.chkReinvested.div(1000000000000000000).toFixed(4) + 'CHK has yielded ' + result.args.tokensMinted.div(1000000000000000000).toFixed(4) + ' GTT tokens!');
                     } else {
-                        alertify.message('Someone reinvested ' + result.args.bnbReinvested.div(1000000000000000000).toFixed(4) + ' BNB and received ' + result.args.tokensMinted.div(1000000000000000000).toFixed(4) + '. B1VS tokens!');
+                        alertify.message('Someone reinvested ' + result.args.chkReinvested.div(1000000000000000000).toFixed(4) + ' CHK and received ' + result.args.tokensMinted.div(1000000000000000000).toFixed(4) + '. GTT tokens!');
                     }
                     break;
                 case 'Transfer':
                     if (currentUserEvent) {
-                        alertify.message('Transferring ' + result.args['tokens'].div(1000000000000000000).toFixed(4) + ' B1VS tokens to' + result.args['to'] + ', please wait...');
+                        alertify.message('Transferring ' + result.args['tokens'].div(1000000000000000000).toFixed(4) + ' GTT tokens to' + result.args['to'] + ', please wait...');
                     }
                     break;
             }
