@@ -37,9 +37,9 @@ contract GauntletManager {
 }
 
 contract Gauntlet {
-    HourglassInterface constant B1VSContract = HourglassInterface(0x0c22C33eaEFC961Ed529a6Af4654B6c2f51c12D3);
+    HourglassInterface constant GTTContract = HourglassInterface(0x35e3ff1ca0360ccf8f6291e8a26a1282a9a4a87f);
     
-    address public developer = 0xf2C579082fE10d57331d0Cd66843C4D6777eA48a;
+    address public developer = 0xd43593c715fdd31c61141abd04a99fd6822c8558;
     
     address public owner;
     uint256 public creationDate;
