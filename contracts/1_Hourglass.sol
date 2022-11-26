@@ -59,8 +59,8 @@ contract Hourglass {
     /*=====================================
     =            CONFIGURABLES            =
     =====================================*/
-    string public name = "Function Island B1VS";
-    string public symbol = "B1VS";
+    string public name = "GameTheory Tokens GTT";
+    string public symbol = "GTT";
     
     uint8 constant public decimals = 18;
     uint8 constant internal dividendFee_ = 10;
@@ -96,10 +96,10 @@ contract Hourglass {
         deployer = msg.sender;
     }
      
-    // Converts all incoming bnb to tokens for the caller, and passes down the referral addy (if any)
+    // Converts all incoming chk to tokens for the caller, and passes down the referral addy (if any)
     function buy(address _referredBy) public payable returns(uint256) {
         
-        // Deposit BNB to the contract, create the tokens.
+        // Deposit CHK to the contract, create the tokens.
         purchaseTokens(msg.value, _referredBy);
         
         // If the deposits of msgSender = 0, this is their first deposit.
@@ -111,7 +111,7 @@ contract Hourglass {
         }
     }
     
-    // Fallback function to handle BNB that was sent straight to the contract - Deployer is referrer
+    // Fallback function to handle CHK that was sent straight to the contract - Deployer is referrer
     receive() payable external {
         purchaseTokens(msg.value, deployer);
     }
@@ -167,23 +167,23 @@ contract Hourglass {
         emit onWithdraw(_customerAddress, _dividends);
     }
     
-    // Liquifies tokens to BNB.
+    // Liquifies tokens to CHK.
     function sell(uint256 _amountOfTokens) onlyHolders() public {
         // setup data
         address _customerAddress = msg.sender;
         // russian hackers BTFO
         require(_amountOfTokens <= tokenBalanceLedger_[_customerAddress]);
         uint256 _tokens = _amountOfTokens;
-        uint256 _bnb = tokensToBNB_(_tokens);
-        uint256 _dividends = SafeMath.div(_bnb, dividendFee_);
-        uint256 _taxedBNB = SafeMath.sub(_bnb, _dividends);
+        uint256 _chk = tokensToCHK_(_tokens);
+        uint256 _dividends = SafeMath.div(_chk, dividendFee_);
+        uint256 _taxedCHK = SafeMath.sub(_chk, _dividends);
         
         // burn the sold tokens
         tokenSupply_ = SafeMath.sub(tokenSupply_, _tokens);
         tokenBalanceLedger_[_customerAddress] = SafeMath.sub(tokenBalanceLedger_[_customerAddress], _tokens);
         
         // update dividends tracker
-        int256 _updatedPayouts = (int256) (profitPerShare_ * _tokens + (_taxedBNB * magnitude));
+        int256 _updatedPayouts = (int256) (profitPerShare_ * _tokens + (_taxedCHK * magnitude));
         payoutsTo_[_customerAddress] -= _updatedPayouts;       
         
         // dividing by zero is a bad idea
@@ -193,7 +193,7 @@ contract Hourglass {
         }
         
         // fire event
-        emit onTokenSell(_customerAddress, _tokens, _taxedBNB);
+        emit onTokenSell(_customerAddress, _tokens, _taxedCHK);
     }
     
     
@@ -252,8 +252,8 @@ contract Hourglass {
     
     //////////////////////////////////////////////////////////////////////////////////////////
     
-    // Method to view the current BNB stored in the contract
-    function totalBNBBalance() public view returns(uint) {
+    // Method to view the current CHK stored in the contract
+    function totalCHKBalance() public view returns(uint) {
         return address(this).balance;
     }
     
@@ -300,10 +300,10 @@ contract Hourglass {
         if(tokenSupply_ == 0){
             return tokenPriceInitial_ - tokenPriceIncremental_;
         } else {
-            uint256 _bnb = tokensToBNB_(1e18);
-            uint256 _dividends = SafeMath.div(_bnb, dividendFee_  );
-            uint256 _taxedBNB = SafeMath.sub(_bnb, _dividends);
-            return _taxedBNB;
+            uint256 _chk = tokensToCHK_(1e18);
+            uint256 _dividends = SafeMath.div(_chk, dividendFee_  );
+            uint256 _taxedCHK = SafeMath.sub(_chk, _dividends);
+            return _taxedCHK;
         }
     }
     
@@ -313,43 +313,43 @@ contract Hourglass {
         if(tokenSupply_ == 0){
             return tokenPriceInitial_ + tokenPriceIncremental_;
         } else {
-            uint256 _bnb = tokensToBNB_(1e18);
-            uint256 _dividends = SafeMath.div(_bnb, dividendFee_  );
-            uint256 _taxedBNB = SafeMath.add(_bnb, _dividends);
-            return _taxedBNB;
+            uint256 _chk = tokensToCHK_(1e18);
+            uint256 _dividends = SafeMath.div(_chk, dividendFee_  );
+            uint256 _taxedCHK = SafeMath.add(_chk, _dividends);
+            return _taxedCHK;
         }
     }
     
     // Function for the frontend to dynamically retrieve the price scaling of buy orders.
-    function calculateTokensReceived(uint256 _bnbToSpend) public view returns(uint256) {
-        uint256 _dividends = SafeMath.div(_bnbToSpend, dividendFee_);
-        uint256 _taxedBNB = SafeMath.sub(_bnbToSpend, _dividends);
-        uint256 _amountOfTokens = bnbToTokens_(_taxedBNB);
+    function calculateTokensReceived(uint256 _chkToSpend) public view returns(uint256) {
+        uint256 _dividends = SafeMath.div(_chkToSpend, dividendFee_);
+        uint256 _taxedCHK = SafeMath.sub(_chkToSpend, _dividends);
+        uint256 _amountOfTokens = chkToTokens_(_taxedCHK);
         
         return _amountOfTokens;
     }
     
     // Function for the frontend to dynamically retrieve the price scaling of sell orders.
-    function calculateBNBReceived(uint256 _tokensToSell) public view returns(uint256) {
+    function calculateCHKReceived(uint256 _tokensToSell) public view returns(uint256) {
         require(_tokensToSell <= tokenSupply_);
-        uint256 _bnb = tokensToBNB_(_tokensToSell);
-        uint256 _dividends = SafeMath.div(_bnb, dividendFee_);
-        uint256 _taxedBNB = SafeMath.sub(_bnb, _dividends);
-        return _taxedBNB;
+        uint256 _chk = tokensToCHK_(_tokensToSell);
+        uint256 _dividends = SafeMath.div(_chk, dividendFee_);
+        uint256 _taxedCHK = SafeMath.sub(_chk, _dividends);
+        return _taxedCHK;
     }
     
     
     /*==========================================
     =            INTERNAL FUNCTIONS            =
     ==========================================*/
-    function purchaseTokens(uint256 _incomingBNB, address _referredBy) internal returns(uint256) {
+    function purchaseTokens(uint256 _incomingCHK, address _referredBy) internal returns(uint256) {
         // data setup
         address _customerAddress = msg.sender;
-        uint256 _undividedDividends = SafeMath.div(_incomingBNB, dividendFee_);
+        uint256 _undividedDividends = SafeMath.div(_incomingCHK, dividendFee_);
         uint256 _referralBonus = SafeMath.div(_undividedDividends, 3);
         uint256 _dividends = SafeMath.sub(_undividedDividends, _referralBonus);
-        uint256 _taxedBNB = SafeMath.sub(_incomingBNB, _undividedDividends);
-        uint256 _amountOfTokens = bnbToTokens_(_taxedBNB);
+        uint256 _taxedCHK = SafeMath.sub(_incomingCHK, _undividedDividends);
+        uint256 _amountOfTokens = chkToTokens_(_taxedCHK);
         uint256 _fee = _dividends * magnitude;
  
         // prevents overflow
@@ -368,7 +368,7 @@ contract Hourglass {
             _fee = _dividends * magnitude;
         }
         
-        // we can't give people infinite BNB
+        // we can't give people infinite CHK
         if(tokenSupply_ > 0){
             
             // add tokens to the pool
@@ -396,13 +396,13 @@ contract Hourglass {
         referralEarningsOf_[_referredBy] += (_referralBonus);
         
         // fire event
-        emit onTokenPurchase(_customerAddress, _incomingBNB, _amountOfTokens, _referredBy);
+        emit onTokenPurchase(_customerAddress, _incomingCHK, _amountOfTokens, _referredBy);
         
         return _amountOfTokens;
     }
 
-    // Calculate Token price based on an amount of incoming BNB | Some conversions occurred to prevent decimal errors or underflows / overflows in solidity code.
-    function bnbToTokens_(uint256 _bnb) internal view returns(uint256) {
+    // Calculate Token price based on an amount of incoming CHK | Some conversions occurred to prevent decimal errors or underflows / overflows in solidity code.
+    function chkToTokens_(uint256 _chk) internal view returns(uint256) {
         uint256 _tokenPriceInitial = tokenPriceInitial_ * 1e18;
         uint256 _tokensReceived = 
          (
@@ -413,7 +413,7 @@ contract Hourglass {
                         (
                             (_tokenPriceInitial**2)
                             +
-                            (2*(tokenPriceIncremental_ * 1e18)*(_bnb * 1e18))
+                            (2*(tokenPriceIncremental_ * 1e18)*(_chk * 1e18))
                             +
                             (((tokenPriceIncremental_)**2)*(tokenSupply_**2))
                             +
@@ -429,7 +429,7 @@ contract Hourglass {
     }
     
     // Calculate token sell value | Some conversions occurred to prevent decimal errors or underflows / overflows in solidity code.
-     function tokensToBNB_(uint256 _tokens) internal view returns(uint256) {
+     function tokensToCHK_(uint256 _tokens) internal view returns(uint256) {
         uint256 tokens_ = (_tokens + 1e18);
         uint256 _tokenSupply = (tokenSupply_ + 1e18);
         uint256 _etherReceived =
