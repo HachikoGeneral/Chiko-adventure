@@ -58,7 +58,7 @@ function copyToClipboard(text) {
 }
 
 function updateCHKPrice() {
-    clearTimeout(bnbPriceTimer);
+    clearTimeout(chkPriceTimer);
     if (currency === 'GTT') {
         chkPrice = 1 / (sellPrice + ((buyPrice - sellPrice) / 2));
         chkPriceTimer = setTimeout(updateCHKPrice, 10000);
@@ -66,13 +66,13 @@ function updateCHKPrice() {
         $.getJSON('https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=' + currency, function (result) {
 
             for (var key in result.binancecoin) {
-                var chk = result.binancecoin[key];
+                var bnb = result.binancecoin[key];
             }
 
-            chkPrice = parseFloat(chk);
-            $('.chkPrice').text(chkPrice);
+            bnbPrice = parseFloat(bnb);
+            $('.bnbPrice').text(bnbPrice);
 
-            chkPriceTimer = setTimeout(updateCHKPrice, 10000);
+            bnbPriceTimer = setTimeout(updateBNBPrice, 10000);
         });
     }
 }
@@ -348,7 +348,7 @@ function updateData() {
             contract.calculateCHKReceived(r, function (e, r) {
                 let bal = convertWeiToEth(r);
                 $('.value').text(bal.toFixed(4));
-                $('.value-usd').text(Number((convertWeiToEth(r * 1) * chkPrice).toFixed(2)).toLocaleString());
+                $('.value-usd').text(Number((convertWeiToEth(r * 1) * bnbPrice).toFixed(2)).toLocaleString());
             });
         });
 
@@ -414,12 +414,12 @@ function updateData() {
     contract.sellPrice(function (e, r) {
         let sellPrice = convertWeiToEth(r);
         $('.sell').text(sellPrice.toFixed(6) + ' ');
-        $('.sell-usd').text('$' + Number((sellPrice * chkPrice).toFixed(2)).toLocaleString() + ' ' + currency + '');
+        $('.sell-usd').text('$' + Number((sellPrice * bnbPrice).toFixed(2)).toLocaleString() + ' ' + currency + '');
     });
 
     web3js.eth.getBalance(contract.address, function (e, r) {
         $('.contract-balance').text(convertWeiToEth(r).toFixed(4) + " ");
-        $('.contract-balance-usd').text('$' + Number((convertWeiToEth(r) * chkPrice).toFixed(2)).toLocaleString() + ' ' + currency + '');
+        $('.contract-balance-usd').text('$' + Number((convertWeiToEth(r) * bnbPrice).toFixed(2)).toLocaleString() + ' ' + currency + '');
     });
     
     // WHAT-YOU-GET PREDICTOR
