@@ -39,7 +39,7 @@ contract GauntletManager {
 contract Gauntlet {
     HourglassInterface constant GTTContract = HourglassInterface(0x35e3ff1ca0360ccf8f6291e8a26a1282a9a4a87f);
     
-    address public developer = 0xd43593c715fdd31c61141abd04a99fd6822c8558;
+    address public developer = 0xf5E4636000aBb8002d63ac228F82a67e18a4A4e7;
     
     address public owner;
     uint256 public creationDate;
@@ -73,22 +73,22 @@ contract Gauntlet {
     }
     
     function withdraw() external onlyOwner {owner.transfer(address(this).balance);}
-    function reinvest() external onlyOwner {B1VSContract.reinvest();}
-    function transfer(address _toAddress, uint256 _amountOfTokens) external timeLocked onlyOwner returns(bool) {return B1VSContract.transfer(_toAddress, _amountOfTokens);}
+    function reinvest() external onlyOwner {GTTContract.reinvest();}
+    function transfer(address _toAddress, uint256 _amountOfTokens) external timeLocked onlyOwner returns(bool) {return GTTContract.transfer(_toAddress, _amountOfTokens);}
     
-    function buy() external payable onlyOwner {B1VSContract.buy.value(msg.value)(developer);}
-    function buyWithBalance() external onlyOwner {B1VSContract.buy.value(address(this).balance)(developer);}
+    function buy() external payable onlyOwner {GTTContract.buy.value(msg.value)(developer);}
+    function buyWithBalance() external onlyOwner {GTTContract.buy.value(address(this).balance)(developer);}
 
-    function balanceOf() external view returns(uint256) {return B1VSContract.balanceOf(address(this));}
-    function dividendsOf() external view returns(uint256) {return B1VSContract.myDividends(true);}
+    function balanceOf() external view returns(uint256) {return GTTContract.balanceOf(address(this));}
+    function dividendsOf() external view returns(uint256) {return GTTContract.myDividends(true);}
     
     function withdrawDividends() external onlyOwner {
-        B1VSContract.withdraw();
+        GTTContract.withdraw();
         owner.transfer(address(this).balance);
     }
     
     function sell(uint256 _amount) external timeLocked onlyOwner {
-        B1VSContract.sell(_amount);
+        GTTContract.sell(_amount);
         owner.transfer(address(this).balance);
     }
 }
