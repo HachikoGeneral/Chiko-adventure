@@ -87,7 +87,7 @@ function myStrongHand() {
         } else {
             el('#address').innerHTML = ("Create a Gauntlet Today!");
             
-            el('#myb1vsbalance').innerHTML = ("- GTT");
+            el('#mygttbalance').innerHTML = ("- GTT");
             el('#mydividends').innerHTML = ("- CHK");
             
             el('#mystatus').innerHTML = ('<strong class="text-warning">NO GAUNTLET</b>');
