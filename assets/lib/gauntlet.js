@@ -115,7 +115,7 @@ function getStrong() {
     });
 }
 
-function buyGTT() {
+function buy() {
     myStrongHandInstance.buy({
         value: web3.toWei(el('#buyamount').value, 'ether')
     }, (error, result) => {
