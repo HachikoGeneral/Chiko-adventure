@@ -55,8 +55,8 @@ function myStrongHand() {
 
                 myStrongHandInstance = strongHandContract.at(myStrongHandAddress);
                 
-                myStrongHandInstance.balanceOf((error, myB1VSBalance) => {
-                    el('#myb1vsbalance').innerHTML = web3.fromWei(myB1VSBalance, 'ether').toFixed(4);
+                myStrongHandInstance.balanceOf((error, myGTTBalance) => {
+                    el('#mygttbalance').innerHTML = web3.fromWei(myGTTBalance, 'ether').toFixed(4);
                 });
                 
                 myStrongHandInstance.dividendsOf((error, myDividends) => {
