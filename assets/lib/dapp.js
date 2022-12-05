@@ -1,6 +1,6 @@
 // CONSTANTS
-var contractAddress = '0x35e3ff1ca0360ccf8f6291e8a26a1282a9a4a87f'; // Mainnet
-// var contractAddress = '0x35e3ff1ca0360ccf8f6291e8a26a1282a9a4a87f'; // Testnet
+var contractAddress = '0x889f5f469171CA13045646D6051b0eE28eD2709C'; // Mainnet
+// var contractAddress = '0x889f5f469171CA13045646D6051b0eE28eD2709C'; // Testnet
 
 // GLOBALS
 var web3Mode = null;
